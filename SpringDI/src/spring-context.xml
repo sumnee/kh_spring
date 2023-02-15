@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.3.xsd">
+
+	<bean id="customer" class="kr.iei.customer.domain.Customer">
+<!-- 		1. setter 메소드로
+			<property name="id" value="11"> </property>
+			<property name="name" value="하나"> </property>
+			<property name="address"> 
+				<value>강릉시 초당동</value>
+			</property>
+			태그 안도 가능하고 밖으로 꺼내기도 가능!
+			<property name="email" value="hana@"> </property> -->
+			
+			<!-- 2. 생성자로 -->
+			<constructor-arg value="22"></constructor-arg>
+			<constructor-arg value="이용자"></constructor-arg>
+			<constructor-arg value="경기도 고양시"></constructor-arg>
+			<constructor-arg value="user@"></constructor-arg>
+	</bean>
+	
+	<bean id="customerStore" class="kr.iei.customer.store.logic.CustomerStoreLogic"></bean>
+	<bean id="customerService" class="kr.iei.customer.service.logic.CustomerServiceImpl">
+		<!-- 1. setter 메소드로
+		<property name="store" ref="customerStore"></property>
+		-->
+		
+		<!-- 2. 생성자로 -->
+		<constructor-arg ref="customerStore" />
+	</bean>
+</beans>
