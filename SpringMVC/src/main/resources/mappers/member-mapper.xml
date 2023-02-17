@@ -14,7 +14,14 @@
 		<result property="updateDate" 	column="UPDATE_DATE" />
 		<result property="mStatus" 	column="M_STATUS" />
 	</resultMap>
- 	<select id="checkMemberLogin" resultMap="memberResultMap">
- 		SELECT * FROM MEMBER_TBL WHERE MEMBER_ID = #{memberId} AND MEMBER_PW = #{memberPw}
+	<select id="selectMembers" resultMap="memberResultMap">
+ 		SELECT * FROM MEMBER_TBL
  	</select>
+ 	<select id="selectOneById" resultMap="memberResultMap">
+ 		SELECT * FROM MEMBER_TBL WHERE MEMBER_ID = #{memberId}
+ 	</select>
+ 	<select id="checkMemberLogin" resultMap="memberResultMap">
+ 		SELECT MEMBER_ID, MEMBER_NAME FROM MEMBER_TBL WHERE MEMBER_ID = #{memberId} AND MEMBER_PW = #{memberPw}
+ 	</select>
+ 	
  </mapper>
