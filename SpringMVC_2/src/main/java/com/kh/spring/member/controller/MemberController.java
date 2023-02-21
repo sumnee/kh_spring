@@ -75,6 +75,42 @@ public class MemberController {
 		
 	}
 	
+	//회원 정보 수정
+	@RequestMapping(value="/member/modify.kh", method=RequestMethod.POST)
+	public String memberModify(@ModelAttribute Member member, Model model) {
+		try {
+			int result = mService.updateMember(member);
+			if(result > 0) {
+				return "redirect:/index.jsp";
+			} else {
+				model.addAttribute("msg", "회원정보 수정 실패");
+				return "common/error";
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			model.addAttribute("msg", e.getMessage());
+			return "common/error";
+		}
+	}
+	
+	//회원 탈퇴
+	@RequestMapping(value="/member/out.kh", method=RequestMethod.GET)
+	public String memberRemove(@RequestParam("memberId") String memberId, Model model) {
+		try {
+			int result = mService.deleteMember(memberId);
+			if(result > 0) {
+				return "redirect:/member/logout.kh";
+			} else {
+				model.addAttribute("msg", "회원 탈퇴 실패");
+				return "common/error";
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			model.addAttribute("msg", e.getMessage());
+			return "common/error";
+		}
+	}
+	
 	//로그인
 	@RequestMapping(value="/member/login.kh", method=RequestMethod.POST)
 	public String memberLogin(
@@ -113,6 +149,7 @@ public class MemberController {
 		}
 	}
 	
+	//마이페이지
 	@RequestMapping(value="/member/mypage.kh", method=RequestMethod.GET)
 	public String showMypage(HttpSession session, Model model) {
 		String memberId = ((Member)session.getAttribute("loginUser")).getMemberId();

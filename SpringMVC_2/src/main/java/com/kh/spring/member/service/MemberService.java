@@ -1,5 +1,7 @@
 package com.kh.spring.member.service;
 
+import org.apache.ibatis.session.SqlSession;
+
 import com.kh.spring.member.domain.Member;
 
 public interface MemberService {
@@ -11,6 +13,19 @@ public interface MemberService {
 	 */
 	public int insertMember(Member member);
 	
+	/**
+	 * 멤버 수정 Service
+	 * @param member
+	 * @return int
+	 */
+	public int updateMember(Member member); 
+	
+	/**
+	 * 멤버 탈퇴 Service
+	 * @param member
+	 * @return int
+	 */
+	public int deleteMember(String memberId);
 	
 	/**
 	 * 멤버 로그인 Service

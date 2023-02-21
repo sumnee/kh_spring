@@ -7,8 +7,10 @@
 	</settings>
 	<typeAliases>
 		<typeAlias type="com.kh.spring.member.domain.Member" alias="Member"/>
+		<typeAlias type="com.kh.spring.notice.domain.Notice" alias="Notice"/>
 	</typeAliases>
 	<mappers>
 		<mapper resource="mappers/member-mapper.xml"/>
+		<mapper resource="mappers/notice-mapper.xml"/>
 	</mappers>
 </configuration>
