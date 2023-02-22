@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.kh.spring.member.domain.PageInfo;
 import com.kh.spring.notice.domain.Notice;
 import com.kh.spring.notice.service.NoticeService;
 
@@ -82,10 +83,35 @@ public class NoticeController {
 
 	//공지글 목록
 	@RequestMapping(value="/notice/list.kh", method=RequestMethod.GET)
-	public String noticeListView(Model model) {
-		List<Notice> nList = nService.selectNoticeList();
+	public String noticeListView(
+			Model model
+			, @RequestParam(value="page", required=false, defaultValue="1") Integer page) {
+		int totalCount = nService.getListCount();
+		PageInfo pi = getPageInfo(page, totalCount);
+		List<Notice> nList = nService.selectNoticeList(pi);
+		model.addAttribute("pi", pi);
 		model.addAttribute("nList", nList);
 		return "notice/list";
+	}
+	
+	//navigator start, end 값 설정 메소드
+	private PageInfo getPageInfo(int currentPage, int totalCount) {
+		PageInfo pi = null;
+		int boardLimit = 10;
+		int naviLimit = 5;
+		int maxPage;
+		int startNavi;
+		int endNavi;
+	
+		maxPage = (int)((double)totalCount/boardLimit+0.9);
+		//Math.ceil((double)totalCount/boardLimit) 이것도 가능
+		startNavi = (((int)((double)currentPage/naviLimit+0.9))-1)*naviLimit+1;
+		endNavi = startNavi + naviLimit -1;
+		if(endNavi > maxPage) {
+			endNavi = maxPage;
+		}
+		pi = new PageInfo(currentPage, boardLimit, naviLimit, startNavi, endNavi, totalCount, maxPage);
+		return pi;
 	}
 	
 	//공지사항 상세

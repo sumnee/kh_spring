@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.apache.ibatis.session.SqlSession;
 
+import com.kh.spring.member.domain.PageInfo;
 import com.kh.spring.notice.domain.Notice;
 
 public interface NoticeStore {
@@ -17,10 +18,18 @@ public interface NoticeStore {
 	public int insertNotice(SqlSession session, Notice notice);
 
 	/**
+	 * 공지사항 삭제 Store
+	 * @param session
+	 * @param noticeNo
+	 * @return int
+	 */
+	public int deleteNotice(SqlSession session, int noticeNo);
+
+	/**
 	 * 공지글 목록 Store
 	 * @return List<Notice>
-	 */
-	public List<Notice> selectNoticeList(SqlSession session);
+	 */	
+	public List<Notice> selectNoticeList(SqlSession session, PageInfo pi);
 
 	/**
 	 * 공지사항 상세 조회 Store
@@ -31,11 +40,11 @@ public interface NoticeStore {
 	public Notice selectOneById(SqlSession session, int noticeNo);
 
 	/**
-	 * 공지사항 삭제 Store
+	 * 게시물 전체 개수 Store
 	 * @param session
-	 * @param noticeNo
 	 * @return int
 	 */
-	public int deleteNotice(SqlSession session, int noticeNo);
+	public int getListCount(SqlSession session);
+
 
 }
