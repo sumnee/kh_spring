@@ -61,24 +61,80 @@ public class NoticeController {
 		}
 	}
 	
-	private String saveFile(MultipartFile uploadFile, HttpServletRequest request) {
-		//내가 원하는 경로 : 프로젝트 경로
+	//공지사항 수정화면
+	@RequestMapping(value = "/notice/modifyView.kh", method = RequestMethod.GET)
+	public String noticeModifyView(
+			@RequestParam("noticeNo") Integer noticeNo
+			, Model model) {
 		try {
-			String root = request.getSession().getServletContext().getRealPath("resources");
-			String savePath = root + "\\nuploadFiles";
-			//폴더가 없으면 자동으로 만들어주기 위해
-			File folder = new File(savePath);
-			if(!folder.exists()) {
-				folder.mkdir();
-			}
-			String filePath = savePath + "\\" + uploadFile.getOriginalFilename();
-			File file = new File(filePath);
-				uploadFile.transferTo(file);
-				return filePath;
-		} catch (IllegalStateException | IOException e) {
+			Notice notice = nService.selectOneById(noticeNo);
+			if(notice != null) {
+				model.addAttribute("notice", notice);
+				return "notice/modify";
+			} else {
+				model.addAttribute("msg", "공지사항 조회 실패");
+				return "common/error";
+			}		
+		} catch (Exception e) {
 			e.printStackTrace();
-			return null;
+			model.addAttribute("msg", e.getMessage());
+			return "common/error";
 		}
+	}
+	
+	//공지사항 수정
+	@RequestMapping(value = "/notice/modify.kh", method = RequestMethod.POST)
+	public String noticeModify(
+			@ModelAttribute Notice notice
+			, @RequestParam(value = "reloadFile", required = false) MultipartFile reloadFile
+			, Model model
+			, HttpServletRequest request) {
+		try {
+			//수정 시, 새로 업로드된 파일이 있는 경우
+			if(!reloadFile.isEmpty()) {
+				//기존 업로드된 파일 체크
+				if(notice.getNoticeFilename() != null) {
+					//기존 파일 삭제
+					this.deleteFile(notice.getNoticeFilename(), request);
+				}
+				//새로 업로드된 파일 복사(지정된 경로에 업로드)
+				String modifyPath = this.saveFile(reloadFile, request);
+				if(modifyPath != null) {
+					//notice에 새로운 파일 이름,경로 SET
+					notice.setNoticeFilename(reloadFile.getOriginalFilename());
+					notice.setNoticeFilepath(modifyPath);
+				}	
+			}
+			//DB에서 공지사항 수정
+			int result = nService.updateNotice(notice);
+			if(result > 0) {
+				return "redirect:/notice/detail.kh?noticeNo="+notice.getNoticeNo();
+			} else {
+				model.addAttribute("msg","공지사항 수정 실패");
+				return "common/error";
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			model.addAttribute("msg", e.getMessage());
+			return "common/error";
+		}
+	}
+
+	@RequestMapping(value="/notice/remove.kh", method=RequestMethod.GET)
+	public String noticeRemove(@RequestParam("noticeNo") int noticeNo,  Model model) {
+		try {
+			int result = nService.deleteNotice(noticeNo);
+			if(result > 0) {
+				return "redirect:/notice/list.kh";
+			} else {
+				model.addAttribute("msg", "삭제 실패");
+				return "common/error";
+			}
+		} catch (Exception e) {
+			model.addAttribute("msg", e.getMessage());
+			return "common/error";
+		} 
+		
 	}
 
 	//공지글 목록
@@ -92,6 +148,20 @@ public class NoticeController {
 		model.addAttribute("pi", pi);
 		model.addAttribute("nList", nList);
 		return "notice/list";
+	}
+	
+	//공지사항 상세
+	@RequestMapping(value="/notice/detail.kh", method=RequestMethod.GET)
+	public String noticeDetailView(@RequestParam("noticeNo") int noticeNo, Model model) {
+		try {
+			Notice notice = nService.selectOneById(noticeNo);
+			model.addAttribute("notice", notice);
+			return "notice/detail";
+		} catch (Exception e) {
+			e.printStackTrace();
+			model.addAttribute("msg", e.getMessage());
+			return "common/error";
+		}
 	}
 	
 	//navigator start, end 값 설정 메소드
@@ -113,36 +183,35 @@ public class NoticeController {
 		pi = new PageInfo(currentPage, boardLimit, naviLimit, startNavi, endNavi, totalCount, maxPage);
 		return pi;
 	}
-	
-	//공지사항 상세
-	@RequestMapping(value="/notice/detail.kh", method=RequestMethod.GET)
-	public String noticeDetailView(@RequestParam("noticeNo") int noticeNo, Model model) {
+
+	private String saveFile(MultipartFile uploadFile, HttpServletRequest request) {
+		//내가 원하는 경로 : 프로젝트 경로
 		try {
-			Notice notice = nService.selectOneById(noticeNo);
-			model.addAttribute("notice", notice);
-			return "notice/detail";
-		} catch (Exception e) {
+			String root = request.getSession().getServletContext().getRealPath("resources");
+			String savePath = root + "\\nuploadFiles";
+			//폴더가 없으면 자동으로 만들어주기 위해
+			File folder = new File(savePath);
+			if(!folder.exists()) {
+				folder.mkdir();
+			}
+			String filePath = savePath + "\\" + uploadFile.getOriginalFilename();
+			File file = new File(filePath);
+				uploadFile.transferTo(file);
+				return filePath;
+		} catch (IllegalStateException | IOException e) {
 			e.printStackTrace();
-			model.addAttribute("msg", e.getMessage());
-			return "common/error";
+			return null;
 		}
 	}
 	
-	@RequestMapping(value="/notice/remove.kh", method=RequestMethod.GET)
-	public String noticeRemove(@RequestParam("noticeNo") int noticeNo,  Model model) {
-		try {
-			int result = nService.deleteNotice(noticeNo);
-			if(result > 0) {
-				return "redirect:/notice/list.kh";
-			} else {
-				model.addAttribute("msg", "삭제 실패");
-				return "common/error";
-			}
-		} catch (Exception e) {
-			model.addAttribute("msg", e.getMessage());
-			return "common/error";
-		} 
-		
+	private void deleteFile(String fileName, HttpServletRequest request) throws Exception{
+		String root = request.getSession().getServletContext().getRealPath("resources");
+		String delPath = root + "\\nuploadFiles";
+		String delFilepath = delPath + "\\" + fileName;
+		File delFile = new File(delFilepath);
+		if(delFile.delete()) {
+			delFile.delete();
+		}
 	}
 	
 }

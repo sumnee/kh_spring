@@ -1,5 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <!DOCTYPE html>
 <html>
 	<head>
@@ -14,7 +15,10 @@
 		<br>
 		첨부파일 ${notice.noticeFilename }
 		<br>
-		<a href="#">수정페이지로 이동</a>
+		<c:url var="nModify" value="/notice/modifyView.kh">
+			<c:param name="noticeNo" value="${notice.noticeNo }"/>
+		</c:url>
+		<a href="${nModify }">수정페이지로 이동</a>
 		<a href="javascript:void(0)" onclick="removeCheck(${notice.noticeNo });">삭제하기</a>
 	
 		<script>
