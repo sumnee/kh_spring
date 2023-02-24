@@ -4,7 +4,7 @@
 <html>
 	<head>
 		<meta charset="UTF-8">
-		<title>마이페이지</title>
+		<title>회원정보 수정</title>
 	</head>
 	<body>
 		<form action="/member/modify.kh" method="post">

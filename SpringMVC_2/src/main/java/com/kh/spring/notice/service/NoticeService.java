@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.kh.spring.member.domain.PageInfo;
 import com.kh.spring.notice.domain.Notice;
+import com.kh.spring.notice.domain.Search;
 
 public interface NoticeService {
 	
@@ -42,9 +43,25 @@ public interface NoticeService {
 	public Notice selectOneById(int noticeNo);
 
 	/**
-	 * 게시물 전체 개수 Service
+	 * 공지사항 검색 Service
+	 * @param pi 
+	 * @param search
+	 * @return List<Notice>
+	 */
+	public List<Notice> selectListByKeyword(PageInfo pi, Search search);
+
+	/**
+	 * 공지사항 전체 개수 Service
 	 * @return int
 	 */
 	public int getListCount();
+
+	/**
+	 * 검색된 공지사항 전체 개수 Service
+	 * @param search
+	 * @return int
+	 */
+	public int getListCount(Search search);
+	//오버로딩(변수,메소드 다름) 오버라이딩(완전 똑같)
 
 }

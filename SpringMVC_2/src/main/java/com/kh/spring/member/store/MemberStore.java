@@ -1,5 +1,7 @@
 package com.kh.spring.member.store;
 
+import java.util.List;
+
 import org.apache.ibatis.session.SqlSession;
 
 import com.kh.spring.member.domain.Member;
@@ -43,4 +45,10 @@ public interface MemberStore {
 	 * @param member
 	 */
 	public Member selectOneById(SqlSession session, String memberId);
+
+	/**
+	 * 멤버 조회 리스트 Store
+	 * @return List<Member>
+	 */
+	public List<Member> selectMemberList(SqlSession session);
 }

@@ -8,6 +8,7 @@ import org.springframework.stereotype.Repository;
 
 import com.kh.spring.member.domain.PageInfo;
 import com.kh.spring.notice.domain.Notice;
+import com.kh.spring.notice.domain.Search;
 import com.kh.spring.notice.store.NoticeStore;
 
 @Repository
@@ -56,8 +57,24 @@ public class NoticeStoreLogic implements NoticeStore{
 	}
 
 	@Override
+	public List<Notice> selectListByKeyword(SqlSession session, PageInfo pi, Search search) {
+		int limit = pi.getBoardLimit();
+		int currentPage = pi.getCurrenPage();
+		int offset = (currentPage-1)*limit;
+		RowBounds rowBounds = new RowBounds(offset, limit);
+		List<Notice> searchList = session.selectList("NoticeMapper.selectListByKeyword", search, rowBounds);
+		return searchList;
+	}
+
+	@Override
 	public int getListCount(SqlSession session) {
 		int result = session.selectOne("NoticeMapper.getListCount");
+		return result;
+	}
+
+	@Override
+	public int getListCount(SqlSession session, Search search) {
+		int result = session.selectOne("NoticeMapper.searchListCount", search);
 		return result;
 	}
 

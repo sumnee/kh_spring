@@ -1,5 +1,7 @@
 package com.kh.spring.member.service;
 
+import java.util.List;
+
 import org.apache.ibatis.session.SqlSession;
 
 import com.kh.spring.member.domain.Member;
@@ -40,6 +42,12 @@ public interface MemberService {
 	 * @return Member
 	 */
 	public Member selectOneById(String memberId);
+
+	/**
+	 * 멤버 리스트 조회 Service
+	 * @return List<Member>
+	 */
+	public List<Member> selectMemberList();
 
 
 

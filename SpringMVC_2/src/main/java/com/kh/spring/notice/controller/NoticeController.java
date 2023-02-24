@@ -17,6 +17,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.kh.spring.member.domain.PageInfo;
 import com.kh.spring.notice.domain.Notice;
+import com.kh.spring.notice.domain.Search;
 import com.kh.spring.notice.service.NoticeService;
 
 @Controller
@@ -119,7 +120,8 @@ public class NoticeController {
 			return "common/error";
 		}
 	}
-
+	
+	// 공지사항 삭제
 	@RequestMapping(value="/notice/remove.kh", method=RequestMethod.GET)
 	public String noticeRemove(@RequestParam("noticeNo") int noticeNo,  Model model) {
 		try {
@@ -164,6 +166,35 @@ public class NoticeController {
 		}
 	}
 	
+	// 공지사항 검색
+	@RequestMapping(value = "/notice/search.kh", method = RequestMethod.GET)
+	public String noticeSearchView(
+			@ModelAttribute Search search
+			//ModelAttribute 와 Search 클래스로 아래 두줄 대체
+//			@RequestParam("searchValue") String keyword
+//			@RequestParam(value = "searchCondition") String condition
+			, @RequestParam(value = "page", required = false, defaultValue = "1") Integer currentPage
+			, Model model) {
+		try {
+			int totalCount = nService.getListCount(search);
+			PageInfo pi = this.getPageInfo(currentPage, totalCount);
+			List<Notice> searchList = nService.selectListByKeyword(pi, search);
+			if(!searchList.isEmpty()) {
+				model.addAttribute("search", search);
+				model.addAttribute("pi", pi);
+				model.addAttribute("sList", searchList);
+				return "notice/search";
+			} else {
+				model.addAttribute("msg", "조회 실패");
+				return "common/error";
+			}	
+		} catch (Exception e) {
+			e.printStackTrace();
+			model.addAttribute("msg", e.getMessage());
+			return "common/error";
+		}
+	}
+
 	//navigator start, end 값 설정 메소드
 	private PageInfo getPageInfo(int currentPage, int totalCount) {
 		PageInfo pi = null;

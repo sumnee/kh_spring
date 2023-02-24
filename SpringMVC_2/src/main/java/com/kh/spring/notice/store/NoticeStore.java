@@ -6,6 +6,7 @@ import org.apache.ibatis.session.SqlSession;
 
 import com.kh.spring.member.domain.PageInfo;
 import com.kh.spring.notice.domain.Notice;
+import com.kh.spring.notice.domain.Search;
 
 public interface NoticeStore {
 	
@@ -48,11 +49,27 @@ public interface NoticeStore {
 	public Notice selectOneById(SqlSession session, int noticeNo);
 
 	/**
-	 * 게시물 전체 개수 Store
+	 * 공지사항 검색 Store
+	 * @param pi 
+	 * @param search
+	 * @return List<Notice>
+	 */
+	public List<Notice> selectListByKeyword(SqlSession session, PageInfo pi, Search search);
+
+	/**
+	 * 공지사항 전체 개수 Store
 	 * @param session
 	 * @return int
 	 */
 	public int getListCount(SqlSession session);
+
+	/**
+	 * 검색된 공지사항 전체 개수 Store
+	 * @param session
+	 * @param search
+	 * @return int
+	 */
+	public int getListCount(SqlSession session, Search search);
 
 
 }

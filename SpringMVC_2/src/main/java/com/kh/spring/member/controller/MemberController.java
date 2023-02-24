@@ -1,6 +1,7 @@
 package com.kh.spring.member.controller;
 
 import java.io.UnsupportedEncodingException;
+import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -75,7 +76,21 @@ public class MemberController {
 		
 	}
 	
-	//회원 정보 수정
+	// 멤버 수정 화면
+	@RequestMapping(value="/member/mypage.kh", method=RequestMethod.GET)
+	public String showMypage(HttpSession session, Model model) {
+		try {
+			String memberId = ((Member)session.getAttribute("loginUser")).getMemberId();
+			Member member = mService.selectOneById(memberId);
+			model.addAttribute("member", member);
+			return "member/mypage";		
+		} catch (Exception e) {
+			model.addAttribute("msg", "로그인 후 본인의 회원정보만 수정 가능합니다.");
+			return "common/error";
+		}
+	}
+
+	//회원 정보 수정 메소드
 	@RequestMapping(value="/member/modify.kh", method=RequestMethod.POST)
 	public String memberModify(@ModelAttribute Member member, Model model) {
 		try {
@@ -109,6 +124,21 @@ public class MemberController {
 			model.addAttribute("msg", e.getMessage());
 			return "common/error";
 		}
+	}
+	
+	// 멤버 상세 보기
+	@RequestMapping(value = "/member/detail.kh", method = RequestMethod.GET)
+	public String memberDetailView(
+			@RequestParam("memberId") String memberId
+			, Model model) {
+		try {
+			Member member = mService.selectOneById(memberId);
+			model.addAttribute("member", member);
+			return "member/detail";
+		} catch (Exception e) {
+			model.addAttribute("msg", e.getMessage());
+			return "common/error";
+		}	
 	}
 	
 	//로그인
@@ -149,13 +179,16 @@ public class MemberController {
 		}
 	}
 	
-	//마이페이지
-	@RequestMapping(value="/member/mypage.kh", method=RequestMethod.GET)
-	public String showMypage(HttpSession session, Model model) {
-		String memberId = ((Member)session.getAttribute("loginUser")).getMemberId();
-		Member member = mService.selectOneById(memberId);
-		model.addAttribute("member", member);
-		return "member/mypage";	
+	// 멤버 리스트 /member/list.kh
+	@RequestMapping(value = "/member/list.kh", method=RequestMethod.GET)
+	public String showMembers(Model model) {
+//	1. 페이징 없이 전부 출력  2023-02-21 12-21 (완료!)
+//	2. 페이징처리해서 출력 2023-02-22 14-16
+//	3. 검색해서 출력 2/24
+//	4. 검색하고 페이징처리 2/24
+		List<Member> mList = mService.selectMemberList();
+		model.addAttribute("mList", mList);
+		return "member/list";
 	}
 
 }

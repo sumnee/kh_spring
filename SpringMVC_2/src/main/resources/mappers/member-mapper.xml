@@ -27,4 +27,7 @@
 	<select id="checkMemberLogin" resultMap="memberResultMap">
 		SELECT MEMBER_ID, MEMBER_NAME FROM MEMBER_TBL WHERE MEMBER_ID = #{memberId } AND MEMBER_PW = #{memberPw }
 	</select>
+	<select id="selectMemberList" resultMap="memberResultMap">
+		SELECT * FROM MEMBER_TBL
+	</select>
 </mapper>

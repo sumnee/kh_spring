@@ -1,5 +1,7 @@
 package com.kh.spring.member.store.logic;
 
+import java.util.List;
+
 import org.apache.ibatis.session.SqlSession;
 import org.springframework.stereotype.Repository;
 
@@ -38,6 +40,12 @@ public class MemberStoreLogic implements MemberStore{
 		Member member = session.selectOne("MemberMapper.selectOneById", memberId);
 		return member;
 		
+	}
+
+	@Override
+	public List<Member> selectMemberList(SqlSession session) {
+		List<Member> mList = session.selectList("MemberMapper.selectMemberList");
+		return mList;
 	}
 
 }
