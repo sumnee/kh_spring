@@ -45,7 +45,56 @@
 		<button id="jq-btn4">전송 및 결과확인</button>
 		<p id="p4"></p>
 
+
+		<h1>JSON 개요</h1>
+			<p>
+				Ajax 서버 통신시 데이터 전송을 위한 포맷
+				<br>
+				JSON(Javscript Object Notation) : 자바스크립트 객체 표기법
+				<br>
+				JSON을 사용하면 모든 데이터형을 서버와 주고 받을 수 있다.(사용목적)
+				<br> 숫자, 문자열, boolean, 배열, 객체, null
+				<br>
+				'{'으로 시작하여 '}'로 끝나며 그 속에 데이터를 표기하고 'key : value(값)' 쌍으로 구성된다.
+				<pre>
+					{
+						"name" : "이순신",
+						"age" : 27,
+						"birth" : "1990-01-01",
+						"gender" : "남",
+						"marry" : true,
+						"address" : "서울특별시 중구 인사동",
+						"family" : {  
+									"father" : "아버지",
+									"mother" : "어머니",
+									"brother" : "동생"
+								}
+					}
+				</pre>
+			</p>
+			
+			<h4>5. 서버로 전송값 보내고 결과 JSON으로 받아서 처리</h4>
+			유저 번호 입력 : <input type="text" id="user-num"><br>
+			<p id="p5"></p>
+			<button id="jq-btn5">실행 및 결과확인</button>
+			
+			<h4>6. 서버로 전송값을 보내고 JSONArray로 결과 받아서 처리</h4>
+			<p>유저 번호를 보내서 해당 유저를 가져오고, 없는 경우 전체리스트 가져오기</p>
+			유저 번호 입력 : <input type="text" id="find-num"><br>
+			<p id="p6"></p>
+			<button id="jq-btn6">실행 및 결과확인</button>
+			
+			<h4>7. GSON을 이용한 List 변환</h4>
+			<p>전체리스트 가져오기</p>
+			<p id="p7"></p>
+			<button id="jq-btn7">실행 및 결과확인</button>
+			<br><br>
+			
+			
+			
 		<script>
+		
+			// 4. 값 주고받기(숫자만)
 			$("#jq-btn4").on("click", function() {
 				const num1 = $("#num-1").val();
 				const num2 = $("#num-2").val();
@@ -62,6 +111,7 @@
 				});
 			});
 
+			// 3. 서버에서 값 받아오기(값을 받아오는거니까 data를 쓰지 않음)
 			document.querySelector("#jq-btn3").addEventListener("click", function() {
 				$.ajax({
 					url : "/ajax/third",
@@ -74,6 +124,8 @@
 					}
 				});
 			})
+			
+			// 1. javascript 사용하기
 			function jsFuncPost() {
 				//1. XMLHttpREquest 객체 설정
 				var xHttp = new XMLHttpRequest();
@@ -94,6 +146,7 @@
 				xHttp.send();
 			}
 			
+			// 2. jQuery사용하기
 			function jqueryFunc() {
 				var message = document.querySelector("#msg-2").value;
 				$.ajax({
@@ -108,6 +161,64 @@
 					}
 				});
 			}
+			
+			
+			/////5번 6번 복습하기
+			// 5. 값 주고받기(객체형태)
+			document.querySelector("#jq-btn5").addEventListener("click", function(){
+				const memberId = $("#user-num").val();
+				$.ajax({
+					url : "/ajax/fifth",
+					data : {"memberId" : memberId},	//"memberId"라는 키값으로 보내짐
+					type : "get",
+					success : function(result){
+						$("#p5").html("아이디 : " + result.memberId + ", 비밀번호 : " + result.memberPw);
+// 						console.log(result);
+					},
+					error : function(){
+						
+					}
+				})
+			})
+			
+			// 6. 값 주고받기(여러개의 값 받기)
+			document.querySelector("#jq-btn6").addEventListener("click", function(){
+				const memberId = $("#find-num").val();
+				$.ajax({
+					url : "/ajax/sixth",
+					data : {"memberId" : memberId},
+					type : "get",
+					success : function(result){
+						let str = "";
+						for(var i = 0; i < result.length; i++){
+							 str += result[i].memberId + " : " + result[i].memberPw + "<br>";
+						}
+						document.querySelector("#p6").innerHTML = str;
+						// $("#p6").html(str);
+					},
+					error : function(){
+						
+					}
+				})
+			})
+			
+			// 7. GSON -> List 대체
+			$("#jq-btn7").on("click", function() {
+				$.ajax({
+					url : "/ajax/seventh",
+					type : "get",
+					success : function(data) {
+						let str = "";
+						for(let i=0; i<data.length;i++) {
+							str += data[i].memberId + " : " + data[i].memberPw + "<br>"
+						}
+						$("#p7").html(str);
+					},
+					error : function() {
+						console.log("서버 처리 실패");
+					}
+				});
+			});
 		</script>
 	</body>
 </html>

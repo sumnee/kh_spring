@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE configuration PUBLIC "-//mybatis.org//DTD Config 3.0//EN" "http://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration>
+	<settings>
+	<!-- null로 데이터가 전달되었으면 빈칸이 아닌 "NULL"로 인식하도록 설정 -->
+		<setting name="jdbcTypeForNull" value="NULL"/>
+	</settings>
+	<typeAliases>
+		<typeAlias type="com.kh.marchpring.board.domain.Board" alias="BoardVo"/>
+	</typeAliases>
+<!-- 	<mappers>
+		<mapper resource="mappers/board-mapper.xml"/>
+		</mappers> 
+	root-context 의 property 태그로 등록해서 안써도됨
+-->
+</configuration>
