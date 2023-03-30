@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.kh.marchpring.board.domain.Board;
+import com.kh.marchpring.board.domain.Reply;
 import com.kh.marchpring.board.service.BoardService;
 import com.kh.marchpring.board.store.BoardStore;
 
@@ -34,6 +35,18 @@ public class BoardServiceImpl implements BoardService{
 	public Board selectOneBoard(Integer boardNo) {
 		Board board = bStore.selectOneBoard(session, boardNo);
 		return board;
+	}
+
+	@Override
+	public int insertReply(Reply reply) {
+		int result = bStore.insertReply(session, reply);
+		return result;
+	}
+
+	@Override
+	public List<Reply> selectAllReply(Integer boardNo) {
+		List<Reply> rList = bStore.selectAllReply(session, boardNo);
+		return rList;
 	}
 
 }

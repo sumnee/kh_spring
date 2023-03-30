@@ -3,6 +3,7 @@ package com.kh.marchpring.board.service;
 import java.util.List;
 
 import com.kh.marchpring.board.domain.Board;
+import com.kh.marchpring.board.domain.Reply;
 
 public interface BoardService {
 
@@ -25,5 +26,19 @@ public interface BoardService {
 	 * @return Board
 	 */
 	public Board selectOneBoard(Integer boardNo);
+
+	/**
+	 * 댓글 작성
+	 * @param reply
+	 * @return int
+	 */
+	public int insertReply(Reply reply);
+
+	/**
+	 * 댓글 목록 조회
+	 * @param boardNo
+	 * @return List
+	 */
+	public List<Reply> selectAllReply(Integer boardNo);
 
 }

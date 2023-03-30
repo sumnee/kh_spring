@@ -9,7 +9,7 @@
 	<body>
 		<h1>게시글 등록</h1>
 		<form action="/board/register" method="post">
-			<table>
+			<table align="center">
 				<tr>
 					<td>제목</td>
 					<td><input type="text" name="boardTitle"></td>
