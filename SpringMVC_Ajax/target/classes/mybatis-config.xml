@@ -8,6 +8,7 @@
 	<typeAliases>
 		<typeAlias type="com.kh.marchpring.board.domain.Board" alias="BoardVo"/>
 		<typeAlias type="com.kh.marchpring.board.domain.Reply" alias="ReplyVo"/>
+		<typeAlias type="com.kh.marchpring.photo.domain.Photo" alias="PhotoVO"/>
 	</typeAliases>
 <!-- 	<mappers>
 		<mapper resource="mappers/board-mapper.xml"/>
