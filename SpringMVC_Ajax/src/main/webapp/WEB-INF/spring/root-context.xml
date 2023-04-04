@@ -1,7 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://www.springframework.org/schema/beans https://www.springframework.org/schema/beans/spring-beans.xsd">
+	xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:tx="http://www.springframework.org/schema/tx"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans https://www.springframework.org/schema/beans/spring-beans.xsd
+						http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-4.3.xsd
+						http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-4.3.xsd">
+						
 	
 	<!-- Root Context: defines shared resources visible to all other web components -->
 	<bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close">
@@ -27,6 +32,47 @@
 		<property name="defaultEncoding" value="utf-8"></property>
 		<property name="maxUploadSize" value="100000000"></property>
 		<property name="maxInMemorySize" value="100000000"></property>
-
 	</bean>
+	
+	
+	<!-- AOP XML 방식 -->
+	<bean id="logAdvice" class="com.kh.marchpring.common.LogAdvice"></bean>
+	<bean id="aroundAdvice" class="com.kh.marchpring.common.AroundLog"></bean>
+	<aop:config>
+		<aop:pointcut expression="execution(* com.kh.marchpring..*Impl.*(..))" id="serviceImplPointCut"/>
+		<aop:aspect ref="logAdvice">
+			<!-- 로그 동작 위치 지정 before after -->
+			<aop:before method="showLog" pointcut-ref="serviceImplPointCut"/> 
+			<aop:after method="printLog" pointcut-ref="serviceImplPointCut"/>
+		</aop:aspect>
+		<aop:aspect ref="aroundAdvice">
+			<aop:around method="checkTime" pointcut-ref="serviceImplPointCut"/>
+		</aop:aspect>
+	</aop:config>
+
+
+	<!-- 	Spring AOP - Transaction -->
+	<!-- 1번. TransactionManager Bean 등록 -->
+	<bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+		<property name="dataSource" ref="dataSource"></property>
+	</bean>
+		
+	<!-- 	2번. 트랜잭션 설정 -->
+	<tx:advice id = "txAdvice" transaction-manager="transactionManager">
+		<tx:attributes>
+			<tx:method name="insert*" rollback-for="Exception"/>
+			<tx:method name="update*" rollback-for="Exception"/>
+			<tx:method name="delete*" rollback-for="Exception"/>
+			<tx:method name="select*" read-only="true"/>
+		</tx:attributes>
+	</tx:advice>
+	
+	<!-- 	3번. Aspect 설정 -->
+	<aop:config proxy-target-class="true">
+		<aop:pointcut expression="execution(* com.kh.marchpring..*Impl.*(..))" id="serviceMethod"/>
+		<aop:advisor advice-ref="txAdvice" pointcut-ref="serviceMethod"/>
+	</aop:config>
+
+
+	
 </beans>
